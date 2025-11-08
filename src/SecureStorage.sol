@@ -3,13 +3,13 @@ pragma solidity ^0.8.26;
 
 contract SecureStorage {
     address public owner;
-    
+
     struct Record {
         uint256 value;
         address createdBy;
     }
-    
-    mapping (address => Record) public records;
+
+    mapping(address => Record) public records;
 
     string private version = "v1";
 
@@ -32,11 +32,11 @@ contract SecureStorage {
         owner = msg.sender;
     }
 
-    function getVersion() external view returns ( string memory ) {
+    function getVersion() external view returns (string memory) {
         return version;
     }
 
-    function store (uint256 _value) external {
+    function store(uint256 _value) external {
         require(_value > 0, "Must be > 0");
         assert(_value <= 1000);
         records[msg.sender].value = _value;
@@ -44,11 +44,11 @@ contract SecureStorage {
         emit AddRecord(msg.sender);
     }
 
-    function getMyRecord () public view onlyExistingRecord(msg.sender) returns ( uint256 ) {
+    function getMyRecord() public view onlyExistingRecord(msg.sender) returns (uint256) {
         return records[msg.sender].value;
     }
 
-    function reset (address _user) external onlyOwner onlyExistingRecord(_user) {
+    function reset(address _user) external onlyOwner onlyExistingRecord(_user) {
         delete records[_user];
         emit ResetRecord(_user);
     }

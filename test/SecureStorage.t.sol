@@ -7,20 +7,20 @@ import {SecureStorage} from "../src/SecureStorage.sol";
 contract SecureStorageTest is Test {
     SecureStorage public secureStorage;
 
-    uint constant VALUE = 120;
+    uint256 constant VALUE = 120;
     address tester = makeAddr("tester");
     address attacker = makeAddr("attacker");
 
     event AddRecord(address _address);
     event ResetRecord(address _address);
-    
+
     function setUp() public {
         secureStorage = new SecureStorage();
     }
 
     // Check version from getVersion()
     function test_Version() public view {
-        assertEq(secureStorage.getVersion(), 'v1');
+        assertEq(secureStorage.getVersion(), "v1");
     }
 
     // Add new record, success case
@@ -29,14 +29,14 @@ contract SecureStorageTest is Test {
         emit AddRecord(tester);
 
         _storeRecord(tester);
-    
+
         (uint256 value, address createdBy) = secureStorage.records(tester);
 
         assertEq(VALUE, value);
         assertEq(tester, createdBy);
     }
 
-    // Add new record, fail cases 
+    // Add new record, fail cases
     function test_StoreRecordRevert() public {
         vm.expectRevert();
         secureStorage.store(1001);
@@ -64,12 +64,12 @@ contract SecureStorageTest is Test {
     // Reset Record, success case
     function test_ResetRecord_EmitsResetRecord() public {
         _storeRecord(tester);
-        
+
         vm.expectEmit();
         emit ResetRecord(tester);
 
         secureStorage.reset(tester);
-        
+
         (uint256 valueAfter, address createdByAfter) = secureStorage.records(tester);
         assertEq(valueAfter, 0);
         assertEq(createdByAfter, address(0));
@@ -88,7 +88,7 @@ contract SecureStorageTest is Test {
     }
 
     // Private function for store value
-    function _storeRecord (address _address) private {
+    function _storeRecord(address _address) private {
         vm.prank(_address);
         secureStorage.store(VALUE);
     }
